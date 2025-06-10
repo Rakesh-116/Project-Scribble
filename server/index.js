@@ -17,12 +17,25 @@ app.use(express.json({ limit: "50mb" })); // Increased limit for large drawings
 app.use(express.urlencoded({ extended: true }));
 
 // CORS configuration
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://project-scribble-jaro.vercel.app",
+];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
+app.options("*", cors()); // Handle all preflight requests
 
 // Import and use routes
 import userRouter from "./routes/user.routes.js";
