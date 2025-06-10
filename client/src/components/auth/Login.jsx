@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import { api, normalizeUrl } from "../../utils/api";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
@@ -32,16 +32,18 @@ const Login = () => {
     e.preventDefault();
     setError("");
     setMessage("");
-
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URI}/api/user/auth/login`,
-        {
-          email: formData.email,
-          password: formData.password,
-        }
+      console.log(import.meta.env.VITE_BACKEND_URI);
+      const apiUrl = normalizeUrl(
+        import.meta.env.VITE_BACKEND_URI,
+        "api/user/auth/login"
       );
+      console.log("Using normalized URL:", apiUrl);
+      const response = await api.post(apiUrl, {
+        email: formData.email,
+        password: formData.password,
+      });
 
       if (response.data) {
         // Use the login function from context instead of directly setting localStorage

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api, normalizeUrl } from "../../utils/api";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -26,18 +26,19 @@ const Register = () => {
       setError("Passwords do not match");
       return;
     }
-
     try {
       setLoading(true);
       console.log("Submitting registration data:", formData);
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URI}/api/user/auth/register`,
-        {
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }
+      const apiUrl = normalizeUrl(
+        import.meta.env.VITE_BACKEND_URI,
+        "api/user/auth/register"
       );
+      console.log("Using normalized URL:", apiUrl);
+      const response = await api.post(apiUrl, {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
 
       console.log(response);
 
