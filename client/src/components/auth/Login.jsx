@@ -34,12 +34,14 @@ const Login = () => {
     setMessage("");
     try {
       setLoading(true);
-      console.log(import.meta.env.VITE_BACKEND_URI);
-      const apiUrl = normalizeUrl(
-        import.meta.env.VITE_BACKEND_URI,
-        "api/user/auth/login"
-      );
-      console.log("Using normalized URL:", apiUrl);
+      console.log("Backend URI:", import.meta.env.VITE_BACKEND_URI);
+
+      // Create a clean base URL without any trailing slashes
+      const baseUrl = import.meta.env.VITE_BACKEND_URI.replace(/\/+$/, "");
+      const endpoint = "api/user/auth/login";
+      const apiUrl = `${baseUrl}/${endpoint}`;
+
+      console.log("Using URL:", apiUrl);
       const response = await api.post(apiUrl, {
         email: formData.email,
         password: formData.password,
@@ -52,6 +54,11 @@ const Login = () => {
         navigate("/");
       }
     } catch (err) {
+      console.error("Login error:", err);
+      console.error("Request URL:", err.config?.url);
+      console.error("Request method:", err.config?.method);
+      console.error("Response:", err.response);
+
       setError(
         err.response?.data?.message ||
           "Login failed. Please check your credentials."

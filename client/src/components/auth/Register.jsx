@@ -29,11 +29,13 @@ const Register = () => {
     try {
       setLoading(true);
       console.log("Submitting registration data:", formData);
-      const apiUrl = normalizeUrl(
-        import.meta.env.VITE_BACKEND_URI,
-        "api/user/auth/register"
-      );
-      console.log("Using normalized URL:", apiUrl);
+
+      // Create a clean base URL without any trailing slashes
+      const baseUrl = import.meta.env.VITE_BACKEND_URI.replace(/\/+$/, "");
+      const endpoint = "api/user/auth/register";
+      const apiUrl = `${baseUrl}/${endpoint}`;
+
+      console.log("Using URL:", apiUrl);
       const response = await api.post(apiUrl, {
         username: formData.username,
         email: formData.email,
@@ -49,7 +51,11 @@ const Register = () => {
         });
       }
     } catch (err) {
-      console.error(err);
+      console.error("Registration error:", err);
+      console.error("Request URL:", err.config?.url);
+      console.error("Request method:", err.config?.method);
+      console.error("Response:", err.response);
+
       setError(
         err.response?.data?.message || "Registration failed. Please try again."
       );

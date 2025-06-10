@@ -17,13 +17,15 @@ export const apiClient = axios.create();
 
 // Add request interceptor to normalize URLs
 apiClient.interceptors.request.use((config) => {
-  const baseUrl = import.meta.env.VITE_BACKEND_URI || "";
-
-  // If URL starts with baseUrl, normalize it
-  if (config.url.startsWith(baseUrl)) {
-    // Extract the path part after the baseUrl
-    const pathPart = config.url.substring(baseUrl.length);
-    config.url = normalizeUrl(baseUrl, pathPart);
+  // Ensure URL doesn't have double slashes anywhere
+  if (config.url && config.url.includes("//")) {
+    // Keep http:// or https:// intact but replace any other double slashes
+    config.url = config.url.replace(
+      /(https?:\/\/)|(\/\/+)/g,
+      (match, protocol) => {
+        return protocol || "/";
+      }
+    );
   }
 
   return config;
