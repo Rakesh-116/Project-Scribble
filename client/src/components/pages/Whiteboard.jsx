@@ -1,6 +1,6 @@
 import React from "react";
-import Excalidraw from "excalidraw";
-import "excalidraw/dist/excalidraw.min.css";
+import { Excalidraw } from "@excalidraw/excalidraw";
+// import "excalidraw/dist/excalidraw.min.css";
 
 const Whiteboard = () => {
   return (
