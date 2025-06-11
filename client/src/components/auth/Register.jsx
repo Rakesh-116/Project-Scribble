@@ -28,12 +28,10 @@ const Register = () => {
     }
     try {
       setLoading(true);
-      console.log("Submitting registration data:", formData);
-
-      // Create a clean base URL without any trailing slashes
-      const baseUrl = import.meta.env.VITE_BACKEND_URI.replace(/\/+$/, "");
+      console.log("Submitting registration data:", formData); // Use the normalizeUrl function to create a clean URL
+      const baseUrl = import.meta.env.VITE_BACKEND_URI;
       const endpoint = "api/user/auth/register";
-      const apiUrl = `${baseUrl}/${endpoint}`;
+      const apiUrl = normalizeUrl(baseUrl, endpoint);
 
       console.log("Using URL:", apiUrl);
       const response = await api.post(apiUrl, {

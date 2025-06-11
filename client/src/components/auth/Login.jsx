@@ -34,12 +34,10 @@ const Login = () => {
     setMessage("");
     try {
       setLoading(true);
-      console.log("Backend URI:", import.meta.env.VITE_BACKEND_URI);
-
-      // Create a clean base URL without any trailing slashes
-      const baseUrl = import.meta.env.VITE_BACKEND_URI.replace(/\/+$/, "");
+      console.log("Backend URI:", import.meta.env.VITE_BACKEND_URI); // Use the normalizeUrl function to create a clean URL
+      const baseUrl = import.meta.env.VITE_BACKEND_URI;
       const endpoint = "api/user/auth/login";
-      const apiUrl = `${baseUrl}/${endpoint}`;
+      const apiUrl = normalizeUrl(baseUrl, endpoint);
 
       console.log("Using URL:", apiUrl);
       const response = await api.post(apiUrl, {
