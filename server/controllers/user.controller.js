@@ -58,10 +58,9 @@ const loginUserController = async (req, res) => {
   if (!isPasswordValid) {
     return res.status(401).json({ message: "Invalid password" });
   }
-
   // Respond with user data (excluding password)
   const { password: _, ...userData } = user.toObject();
-  return res.status(200).json(userData, { message: "Login successful" });
+  return res.status(200).json({ userData, message: "Login successful" });
 };
 
 const fetchUserController = async (req, res) => {};
