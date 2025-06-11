@@ -16,13 +16,16 @@ connectDB();
 app.use(express.json({ limit: "50mb" })); // Increased limit for large drawings
 app.use(express.urlencoded({ extended: true }));
 
-// CORS configuration
+// CORS configuration with dynamic origin support for Vercel
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://project-scribble-jaro.vercel.app",
   "https://project-scribble.vercel.app",
-];
+  process.env.CLIENT_URL, // Dynamically add the client URL from env variables
+].filter(Boolean); // Remove any undefined values
+
+console.log("Allowed origins:", allowedOrigins);
 
 app.use(
   cors({
@@ -43,6 +46,14 @@ app.use(
       return callback(null, true);
     },
     credentials: true,
+    methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
+    allowedHeaders: [
+      "Origin",
+      "X-Requested-With",
+      "Content-Type",
+      "Accept",
+      "Authorization",
+    ],
   })
 );
 
@@ -65,6 +76,20 @@ app.use("/api/user", userRouter);
 // Add a basic test route
 app.get("/test", (req, res) => {
   res.json({ message: "Server is working!" });
+});
+
+// Special route for Vercel health checks
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok", environment: process.env.NODE_ENV });
+});
+
+// Default route for checking API status
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Scribbly API is running",
+    environment: process.env.NODE_ENV,
+    version: "1.0.0",
+  });
 });
 
 const port = process.env.PORT || 3000;
